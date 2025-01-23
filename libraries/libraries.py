@@ -7,5 +7,8 @@ import random
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+#DB Connection
+import psycopg2 as pg
+
 #Other
 import warnings
