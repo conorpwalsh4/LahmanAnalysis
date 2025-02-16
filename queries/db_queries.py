@@ -84,3 +84,17 @@ batting_query = '''
                 
                 LIMIT 5;         
                 '''
+
+Phils_SP_query = '''
+                SELECT 
+                    pitching.*, 
+                    peo.nameFirst || ' ' || peo.nameLast AS "Full Name" 
+                FROM 
+                    pitching 
+                INNER JOIN 
+                    people AS peo ON pitching.playerID = peo.playerID 
+                WHERE 
+                    pitching.teamid = 'PHI' 
+                    AND pitching.yearid = 2023 
+                    AND pitching.gs > 10;        
+                '''

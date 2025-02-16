@@ -32,38 +32,55 @@ def get_running_avg_df(gamelogs_: pd.DataFrame, timeframe= 10):
     """
     gamelogs_ = gamelogs_.sort_values(by='Date', ascending=True)
 
-    team_runs = {team: [] for team in gamelogs_['Visiting Team'].unique()}
+    team_runs_scored = {team: [] for team in gamelogs_['Visiting Team'].unique()}
+    team_runs_allowed = {team: [] for team in gamelogs_['Visiting Team'].unique()}
 
     # Loop through each row in the dataframe
     running_averages = []
 
     for index, row in gamelogs_.iterrows():
         visiting_team = row['Visiting Team']
+        visiting_team_game_num = row['Visiting Team Game Number']
         home_team = row['Home Team']
+        home_team_game_num = row['Home Team Game Number']
         visiting_score = row['Visiting Team Score']
         home_score = row['Home Team Score']
         
-        # Update runs scored for visiting team
-        team_runs[visiting_team].append(visiting_score)
-        visiting_avg = running_average(team_runs[visiting_team], window_size=timeframe)
-        
+        # Update runs for visiting team
+        team_runs_scored[visiting_team].append(visiting_score)
+        team_runs_allowed[visiting_team].append(home_score)
+        visiting_run_avg = running_average(team_runs_scored[visiting_team], window_size=timeframe)
+        visiting_avg = running_average(team_runs_scored[visiting_team], window_size=len(team_runs_scored[visiting_team]))
+        vis_allow_run_avg = running_average(team_runs_allowed[visiting_team], window_size=timeframe)
+        vis_allow_avg = running_average(team_runs_allowed[visiting_team], window_size=len(team_runs_allowed[visiting_team]))
+
         # Update runs scored for home team
-        team_runs[home_team].append(home_score)
-        home_avg = running_average(team_runs[home_team], window_size=timeframe)
+        team_runs_scored[home_team].append(home_score)
+        team_runs_allowed[home_team].append(visiting_score)
+        home_run_avg = running_average(team_runs_scored[home_team], window_size=timeframe)
+        home_avg = running_average(team_runs_scored[home_team], window_size=len(team_runs_scored[visiting_team]))
+        home_allow_run_avg = running_average(team_runs_allowed[home_team], window_size=timeframe)
+        home_allow_avg = running_average(team_runs_allowed[home_team], window_size=len(team_runs_allowed[home_team]))
         
         # Append running averages to the list
         running_averages.append({
             'Date': row['Date'],
             'Visiting Team': visiting_team,
+            'VTRA_S': visiting_run_avg,
+            'VTA_S' : visiting_avg,
+            'VTRA_A': vis_allow_run_avg,
+            'VTA_A' : vis_allow_avg,
             'Home Team': home_team,
-            'VTRA': visiting_avg,
-            'HTRA': home_avg
+            'HTRA_S': home_run_avg,
+            'HTA_S' : home_avg,
+            'HTRA_A': home_allow_run_avg,
+            'HTA_A' : home_allow_avg
         })
 
     # Convert the running averages list to a dataframe
     running_avg_df = pd.DataFrame(running_averages)
-    running_avg_df['HTRA_Norm'] = min_max_norm(running_avg_df,'HTRA')
-    running_avg_df['VTRA_Norm'] = min_max_norm(running_avg_df,'VTRA')
+    running_avg_df['HTRA_Norm'] = min_max_norm(running_avg_df,'HTRA_S')
+    running_avg_df['VTRA_Norm'] = min_max_norm(running_avg_df,'VTRA_S')
 
     return running_avg_df
 
@@ -80,6 +97,8 @@ def min_max_norm(data:pd.DataFrame, column_name:str):
     """
     min_val = data[column_name].min()
     max_val = data[column_name].max()
+    #if min_val < 0:
+    #    data[column_name] = data[column_name] + abs(min_val)
     normalized_column = (data[column_name] - min_val) / ((max_val - min_val) + 1e-6)
     
     return normalized_column
