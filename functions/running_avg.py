@@ -97,8 +97,6 @@ def min_max_norm(data:pd.DataFrame, column_name:str):
     """
     min_val = data[column_name].min()
     max_val = data[column_name].max()
-    #if min_val < 0:
-    #    data[column_name] = data[column_name] + abs(min_val)
     normalized_column = (data[column_name] - min_val) / ((max_val - min_val) + 1e-6)
     
     return normalized_column
