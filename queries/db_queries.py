@@ -98,3 +98,47 @@ Phils_SP_query = '''
                     AND pitching.yearid = 2023 
                     AND pitching.gs > 10;        
                 '''
+SP_query = '''
+                WITH Pitchers_2022 AS (
+                    SELECT
+                        p.playerID,
+                        STRING_AGG(p.teamID, ' / ') AS teams2022,
+                        SUM(p.GS) AS GS2022,
+                        AVG(p.era) AS ERA2022
+                    FROM
+                        pitching AS p
+                    WHERE
+                        p.yearID = 2022
+                    GROUP BY
+                        p.playerID
+                    HAVING
+                        SUM(p.GS) >= 10
+                ),
+                Pitchers_2023 AS (
+                    SELECT
+                        p.playerID,
+                        STRING_AGG(p.teamID, ' / ') AS teams2023,
+                        SUM(p.GS) AS GS2023,
+                        AVG(p.era) AS ERA2023
+                    FROM
+                        pitching AS p
+                    WHERE
+                        p.yearID = 2023
+                    GROUP BY
+                        p.playerID
+                    HAVING
+                        SUM(p.GS) >= 10
+                )
+                SELECT
+                    peo.nameFirst || ' ' || peo.nameLast AS "Full Name",
+                    p2022.teams2022 AS "Teams 2022",
+                    p2022.GS2022 AS "Games Started 2022",
+                    p2023.teams2023 AS "Teams 2023",
+                    p2023.GS2023 AS "Games Started 2023"
+                FROM
+                    Pitchers_2022 AS p2022
+                INNER JOIN
+                    Pitchers_2023 AS p2023 ON p2022.playerID = p2023.playerID
+                INNER JOIN
+                    people AS peo ON p2022.playerID = peo.playerID;      
+                '''
