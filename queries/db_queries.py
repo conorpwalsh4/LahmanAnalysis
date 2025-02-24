@@ -120,6 +120,7 @@ SP_query = '''
                         STRING_AGG(p.teamID, ' / ') AS teams2023,
                         SUM(p.GS) AS GS2023,
                         AVG(p.era) AS ERA2023
+                    
                     FROM
                         pitching AS p
                     WHERE
@@ -133,12 +134,15 @@ SP_query = '''
                     peo.nameFirst || ' ' || peo.nameLast AS "Full Name",
                     p2022.teams2022 AS "Teams 2022",
                     p2022.GS2022 AS "Games Started 2022",
+                    p2022.ERA2022 AS "ERA 2022",
                     p2023.teams2023 AS "Teams 2023",
-                    p2023.GS2023 AS "Games Started 2023"
+                    p2023.GS2023 AS "Games Started 2023",
+                    p2023.ERA2023 AS "ERA 2023",
+                    ROUND((p2023.ERA2023 - p2022.ERA2022)::numeric,3) AS "ERA CHANGE YOY"
                 FROM
                     Pitchers_2022 AS p2022
                 INNER JOIN
                     Pitchers_2023 AS p2023 ON p2022.playerID = p2023.playerID
                 INNER JOIN
-                    people AS peo ON p2022.playerID = peo.playerID;      
+                    people AS peo ON p2022.playerID = peo.playerID;    
                 '''
