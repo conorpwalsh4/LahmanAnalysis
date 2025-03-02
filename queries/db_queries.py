@@ -50,7 +50,7 @@ curr_teams_query = '''
                 
                 FROM teams as t
 
-                WHERE t.yearID > 2022
+                WHERE t.yearID >= 2022
 
                 ORDER BY t.W DESC               
                 
@@ -95,7 +95,7 @@ Phils_SP_query = '''
                     people AS peo ON pitching.playerID = peo.playerID 
                 WHERE 
                     pitching.teamid = 'PHI' 
-                    AND pitching.yearid = 2023 
+                    AND pitching.yearid >= 2022 
                     AND pitching.gs > 10;        
                 '''
 SP_query = '''
@@ -112,7 +112,7 @@ SP_query = '''
                     GROUP BY
                         p.playerID
                     HAVING
-                        SUM(p.GS) >= 10
+                        SUM(p.GS) >= 7
                 ),
                 Pitchers_2023 AS (
                     SELECT
@@ -128,7 +128,7 @@ SP_query = '''
                     GROUP BY
                         p.playerID
                     HAVING
-                        SUM(p.GS) >= 10
+                        SUM(p.GS) >= 7
                 )
                 SELECT
                     peo.nameFirst || ' ' || peo.nameLast AS "Full Name",

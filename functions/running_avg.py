@@ -18,7 +18,7 @@ def running_average(var, window_size=10):
         return sum(var[-window_size:]) / window_size
 
 
-def get_running_avg_df(gamelogs_: pd.DataFrame, timeframe= 10):
+def get_running_avg(gamelogs_: pd.DataFrame, timeframe= 10):
     """
     Returns df appending running average of
     of runs per game where time is defined by timeframe variable.

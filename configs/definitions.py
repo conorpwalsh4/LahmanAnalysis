@@ -4,7 +4,7 @@ ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 # Retrosheet contains data from teams who have moved/renamed. Therefore, some abbreviations differ from Lahman DB. This dict maps them
 renamed_team = {
     'NYN': 'NYM',
-    'CHA': 'CHI',
+    'CHA': 'CHW',
     'SFN': 'SFG',
     'ANA': 'LAA',
     'CHN': 'CHC',
