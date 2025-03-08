@@ -1,5 +1,7 @@
 import pandas as pd
 
+from functions.helper_functions import *
+
 # Function to calculate running average
 def running_average(var, window_size=10):
     """
@@ -83,23 +85,6 @@ def get_running_avg(gamelogs_: pd.DataFrame, timeframe= 10):
     running_avg_df['VTRA_Norm'] = min_max_norm(running_avg_df,'VTRA_S')
 
     return running_avg_df
-
-def min_max_norm(data:pd.DataFrame, column_name:str):
-    """
-    Apply min-max normalization to a specified column in a dataframe.
-
-    Parameters:
-    df (pd.DataFrame): The dataframe containing the data.
-    column_name (str): The name of the column to normalize.
-
-    Returns:
-    pd.Series: The normalized column.
-    """
-    min_val = data[column_name].min()
-    max_val = data[column_name].max()
-    normalized_column = (data[column_name] - min_val) / ((max_val - min_val) + 1e-6)
-    
-    return normalized_column
 
 def calc_total_rpg(gamelogs_:pd.DataFrame):
     """
